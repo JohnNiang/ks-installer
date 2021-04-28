@@ -1,0 +1,73 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    custom-alerting-rule-level: cluster
+    role: thanos-alerting-rules
+    thanosruler: thanos-ruler
+  name: prometheus-devops-rules
+  namespace: kubesphere-monitoring-system
+spec:
+  groups:
+    - name: devops.jenkins.rules
+      rules:
+        - alert: jenkins-cpu-overcommit
+          annotations:
+            summary: >-
+              Jenkins({{ $labels.instance }}) process has overcommitted CPU resource requests.
+          expr: >
+            sum(rate(process_cpu_seconds_total{container="ks-jenkins", namespace="kubesphere-devops-system"}[5m])) by (container, instance)
+            > 0.8
+          for: 5m
+          labels:
+            alerttype: metric
+            severity: warning
+        - alert: jenkins-vm-memory-overcommit
+          annotations:
+            summary: Jenkins({{ $labels.instance }}) has overcommitted VM memory resource requests.
+          expr: 'avg_over_time(vm_memory_heap_usage[5m]) > 0.8'
+          for: 5m
+          labels:
+            alerttype: metric
+            severity: warning
+        - alert: jenkins-inodes-filling-up
+          annotations:
+            summary: The inodes in Jenkins({{ $labels.instance }}) is over {{ $value | humanizePercentage }} used.
+          expr: >-
+            kubelet_volume_stats_inodes_used{namespace="kubesphere-devops-system",persistentvolumeclaim="ks-jenkins"}
+            /
+            kubelet_volume_stats_inodes{namespace="kubesphere-devops-system",persistentvolumeclaim="ks-jenkins"}
+            > 0.90
+          for: 5m
+          labels:
+            alerttype: metric
+            severity: warning
+        - alert: jenkins-down
+          annotations:
+            message: >-
+              {{ $labels.instance }} of job {{ $labels.job }} has been down for
+              more than 1 minutes.
+            summary: Jenkins({{ $labels.instance }}) has been offline.
+          expr: absent(default_jenkins_up)
+          for: 1m
+          labels:
+            alerttype: metric
+            severity: critical
+        - alert: jenkins-too-many-stuck-jobs
+          annotations:
+            message: Please have an inspection about jenkins.
+            summary: Too many stuck jobs({{ $value }}).
+          expr: jenkins_queue_stuck_value > 1
+          for: 1m
+          labels:
+            alerttype: metric
+            severity: warning
+        - alert: jenkins-too-many-failure-jobs
+          annotations:
+            summary: Too many failed jobs.
+            message: There are {{ $value }} failed jobs more than 5 for 5 minutes.
+          expr: increase(jenkins_runs_failure_total{namespace='kubesphere-devops-system', container='ks-jenkins', job='ks-jenkins'}[5m]) > 5
+          for: 5m
+          labels:
+            alerttype: metric
+            severity: warning
