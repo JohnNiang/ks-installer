@@ -4,7 +4,7 @@ devops:
   jenkinsMemoryLim: "{{ jenkins_memory_lim |default('8Gi') }}"
   jenkinsMemoryReq: "{{ jenkins_memory_req |default('4Gi') }}"
 
-JavaOpts: >
+JenkinsJavaOpts: >
   -Xms{{ devops.jenkinsJavaOpts_Xms | default('3g') }}
   -Xmx{{ devops.jenkinsJavaOpts_Xmx | default('6g') }}
   -XX:MaxRAM={{ devops.jenkinsJavaOpts_MaxRAM | default('8g') }}
@@ -44,12 +44,9 @@ EMAIL_USE_SSL: false
 EMAIL_SMTP_PORT: 465
 EMAIL_FROM_PASS: P@ssw0rd
 
-sonar_account_user: ks-devops
-
 harbor_domain: harbor.devops.kubesphere.local
 
-
+sonar_account_user: ks-devops
 sonarqube_enable: true
-
 sonarqube_user_name: sonarqube
 sonarqube_user_passwd: sonarqube
