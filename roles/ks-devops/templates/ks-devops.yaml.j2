@@ -91,6 +91,8 @@ s2i:
   s2ioperator:
     image:
       tag: "{{ s2ioperator_tag }}"
+  prometheus:
+    namespace: "kubesphere-monitoring-system"
 
 # Jenkins chart values
 jenkins:
@@ -178,3 +180,5 @@ jenkins:
     - name: casc-config
       mountPath: /var/jenkins_home/casc_configs
       readOnly: true
+  prometheus:
+    namespace: "kubesphere-monitoring-system"

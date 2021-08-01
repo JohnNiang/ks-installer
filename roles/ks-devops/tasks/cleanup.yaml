@@ -1,0 +1,7 @@
+- name: ks-devops | Deleting service monitor of devops
+  shell: |
+    # Those resources are going to be install by ks-devops helm chart
+    kubectl -n kubesphere-monitoring-system delete ServiceMonitor s2i-operator
+    kubectl -n kubesphere-monitoring-system delete ServiceMonitor ks-jenkins
+    kubectl -n kubesphere-monitoring-system delete PrometheusRule prometheus-devops-rules
+  failed_when: false

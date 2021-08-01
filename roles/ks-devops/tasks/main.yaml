@@ -76,8 +76,21 @@
     - { path: ks-devops, file: ks-devops.yaml }
     - { path: ks-devops, file: ks-devops-plugin.yaml }
 
+- name: ks-devops | Checking if ks-devops has installed
+  shell: |
+    # TODO Rename helm chart name
+    helm status ks-ctl -n kubesphere-devops-system
+  register: ks_devops_installed
+  failed_when: false
+
+- name: ks-devops | Cleaning up resources before upgrading or installing ks-devops
+  import_tasks: cleanup.yaml
+  # When ks-devops is not installed, clean up some resources
+  when: ks_devops_installed is not defined or ks_devops_installed.rc != 0
+
 - name: ks-devops | Upgrading or installing ks-devops
   shell: |
+    # TODO Rename helm chart name
     {{ bin_dir }}/helm upgrade --install ks-ctl {{ kubesphere_dir }}/ks-devops/charts/ks-devops-0.1.0.tgz \
     -n kubesphere-devops-system \
     -f {{ kubesphere_dir }}/ks-devops/ks-devops.yaml
