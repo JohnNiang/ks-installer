@@ -8,7 +8,7 @@ function check_installer_ok(){
     echo "waiting for ks-installer pod ready"
     sleep 10
     kubectl get pod -A
-    kubectl get events --sort-by=.metadata.creationTimestamp
+    kubectl get events -A --sort-by=.metadata.creationTimestamp
     kubectl -n kubesphere-system wait --timeout=360s --for=condition=Available deployment/ks-installer
     kubectl -n kubesphere-system wait --timeout=360s --for=condition=Ready $(kubectl -n kubesphere-system get pod -l app=ks-install -oname)
     echo "waiting for KubeSphere ready"
