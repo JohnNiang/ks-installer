@@ -48,6 +48,11 @@ jobs:
         kubectl apply -f deploy/cluster-configuration.yaml
         bash scripts/check_cluster_status.sh
 
+    - name: Test DevOps application
+      run: |
+        kubectl patch -nkubesphere-system cc ks-installer --type=json -p='[{"op": "replace", "path": "/spec/devops/enabled", "value": true}]'
+        bash scripts/check_cluster_status.sh
+
     - name: Test plugin
       run: |
         kubectl -n kubesphere-system patch cc ks-installer --type merge --patch '{"spec":{"servicemesh":{"enabled":true},"devops":{"enabled":true},"alerting":{"enabled":true},"auditing":{"enabled":true},"console":{"enableMultiLogin":true},"events":{"enabled":true},"logging":{"enabled":true},"metrics_server":{"enabled":true},"network":{"networkpolicy":{"enabled":true}},"openpitrix":{"store":{"enabled":true}}}}'
