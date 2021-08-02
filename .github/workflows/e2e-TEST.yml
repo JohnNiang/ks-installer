@@ -42,6 +42,8 @@ jobs:
         sed -i 's/imagePullPolicy: .*/imagePullPolicy: IfNotPresent/g' deploy/kubesphere-installer.yaml
         sed -i 's/jenkinsMemoryReq: .*/jenkinsMemoryReq: 200Mi/g' deploy/cluster-configuration.yaml
         sed -i 's/# elasticsearchDataReplicas: .*/elasticsearchDataReplicas: 1/g' deploy/cluster-configuration.yaml
+        cat deploy/kubesphere-installer.yaml
+        cat deploy/cluster-configuration.yaml
         kubectl apply -f deploy/kubesphere-installer.yaml
         kubectl apply -f deploy/cluster-configuration.yaml
         bash scripts/check_cluster_status.sh
