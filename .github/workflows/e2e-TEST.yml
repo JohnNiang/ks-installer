@@ -2,7 +2,7 @@ name: e2e-TEST
 
 on:
   push:
-    branches: [master, release-3.1]
+    branches: [master, release-3.1, refactor/remove-devops-crd-self-test]
   pull_request:
     branches: [master, release-3.1]
 
@@ -15,7 +15,7 @@ env:
 
 jobs:
   Test-on-k8s-v-1-19-7:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     timeout-minutes: 150
     outputs:
       is_MY_SECRET_set: ${{ steps.checksecret_job.outputs.is_MY_SECRET_set }}
